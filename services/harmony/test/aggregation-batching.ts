@@ -654,6 +654,30 @@ describe('when testing a batched aggregation service', function () {
     let pageStub;
     let batchSizeStub;
 
+    const serviceConfigs = [
+      {
+        name: 'podaac/concise',
+        data_operation_version: '0.22.0',
+        type: {
+          name: 'turbo',
+        },
+        collections: [{ id: collection }],
+        capabilities: {
+          concatenation: true,
+        },
+        steps: [{
+          image: 'harmonyservices/query-cmr:stable',
+          is_sequential: true,
+        }, {
+          image: 'ghcr.io/podaac/concise:sit',
+          is_batched: true,
+          operations: ['concatenate'],
+        }],
+      },
+    ];
+
+    hookServices(serviceConfigs);
+
     before(function () {
       pageStub = stub(env, 'cmrMaxPageSize').get(() => 2);
       batchSizeStub = stub(env, 'maxBatchInputs').get(() => 10000);
@@ -676,30 +700,6 @@ describe('when testing a batched aggregation service', function () {
         maxResults: 7,
         concatenate: true,
       };
-
-      const serviceConfigs = [
-        {
-          name: 'podaac/concise',
-          data_operation_version: '0.22.0',
-          type: {
-            name: 'turbo',
-          },
-          collections: [{ id: collection }],
-          capabilities: {
-            concatenation: true,
-          },
-          steps: [{
-            image: 'harmonyservices/query-cmr:stable',
-            is_sequential: true,
-          }, {
-            image: 'ghcr.io/podaac/concise:sit',
-            is_batched: true,
-            operations: ['concatenate'],
-          }],
-        },
-      ];
-
-      hookServices(serviceConfigs);
 
       hookRangesetRequest('1.0.0', collection, 'all', { query: conciseQuery, username: 'joe' });
       hookRedirect('joe');
