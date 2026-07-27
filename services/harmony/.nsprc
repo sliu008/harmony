@@ -1,1 +1,7 @@
-{}
+{
+  "GHSA-mh99-v99m-4gvg": {
+    "active": true,
+    "notes": "brace-expansion via dev dependency nyc/glob - no fix available without major version bump",
+    "expiry": "2026-10-01"
+  }
+}
